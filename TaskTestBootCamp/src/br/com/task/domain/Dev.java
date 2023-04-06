@@ -2,21 +2,31 @@ package br.com.task.domain;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public class Dev {
 	private String name;
 	private Set<Content> contentsDoing = new LinkedHashSet<>();
 	private Set<Content> contentsDone = new LinkedHashSet<>();
-	
+
 	public void registerBootcamp(Bootcamp bootcamp) {
-		
+		this.contentsDoing.addAll(bootcamp.getContent());
+		bootcamp.getDevsRegistered().add(this);
 	}
 	public void progress() {
-		
+		Optional<Content> content = this.contentsDone.stream().findFirst();
+		if(content.isPresent()) {
+			this.contentsDone.add(content.get());
+			this.contentsDoing.remove(content.get());
+		} else {
+			System.err.println("You aren't registered in a content!");
+		}
 	}
-	public void calculateTotalXp() {
-		
+	public double calculateTotalXp() {
+		return	this.contentsDone
+				.stream()
+				.mapToDouble(content -> content.calculateXp()).sum();
 	}
 	public String getName() {
 		return name;
@@ -52,6 +62,6 @@ public class Dev {
 		return Objects.equals(contentsDoing, other.contentsDoing) && Objects.equals(contentsDone, other.contentsDone)
 				&& Objects.equals(name, other.name);
 	}
-	
-	
+
+
 }
