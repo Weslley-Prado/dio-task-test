@@ -1,5 +1,6 @@
 package br.com.task.domain;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,7 +16,7 @@ public class Dev {
 		bootcamp.getDevsRegistered().add(this);
 	}
 	public void progress() {
-		Optional<Content> content = this.contentsDone.stream().findFirst();
+		Optional<Content> content = this.contentsDoing.stream().findFirst();
 		if(content.isPresent()) {
 			this.contentsDone.add(content.get());
 			this.contentsDoing.remove(content.get());
@@ -24,9 +25,13 @@ public class Dev {
 		}
 	}
 	public double calculateTotalXp() {
-		return	this.contentsDone
-				.stream()
-				.mapToDouble(content -> content.calculateXp()).sum();
+		Iterator<Content>iterator= this.contentsDone.iterator();
+		double sum = 0;
+		while(iterator.hasNext()) {
+			double next = iterator.next().calculateXp();
+			sum +=next;
+		}
+		return sum;
 	}
 	public String getName() {
 		return name;
